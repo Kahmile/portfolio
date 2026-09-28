@@ -1,0 +1,16 @@
+# Source files and raw staging — only the website and assets/ are published
+portfolio.pptx
+portfolio.pdf
+*.pptx
+*.pdf
+_build/
+2.12_mobile_robot_project_photos/
+inverted_pendulum_images_and_professional_videos/
+profile.jpeg
+about_me.txt
+more about me.md
+web building instructions.txt
+__pycache__/
+.DS_Store
+Thumbs.db
+desktop.ini
