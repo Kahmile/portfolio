@@ -114,6 +114,8 @@
       el("h1", { tabindex: "-1", id: "about-heading", text: SITE.name }),
       el("h2", { text: "Introduction" }),
       ...SITE.bio.map((para) => el("p", { text: para })),
+      el("h2", { text: "Professional Interests" }),
+      el("p", { class: "tagline", text: SITE.professionalInterests.join(" · ") }),
       el("h2", { text: "Contact" }),
       el("ul", { class: "contact" }, [
         el("li", {}, ["Email: ", el("a", { href: `mailto:${SITE.contact.email}`, text: SITE.contact.email })]),
@@ -122,8 +124,6 @@
           text: SITE.contact.linkedin.replace(/^https:\/\/(www\.)?|\/$/g, ""),
         }, el("span", { class: "visually-hidden", text: " (opens in a new tab)" }))]),
       ]),
-      el("h2", { text: "Professional Interests" }),
-      el("p", { class: "tagline", text: SITE.professionalInterests.join(" · ") }),
       el("div", { class: "cta" }, [
         el("a", { class: "button", href: `#/project/${PROJECTS[0].slug}`, text: "View latest project" }),
       ]),
