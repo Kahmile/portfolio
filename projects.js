@@ -10,6 +10,10 @@ window.SITE = {
   "bio": [
     "With a strong hands-on background, I am passionate about the product development process. My interests currently lie at the intersection of engineering and my lived experience with low vision. I am interested in helping consumer product companies make interfaces that are also usable by people with disabilities."
   ],
+  "contact": {
+    "email": "kawhitby@mit.edu",
+    "linkedin": "https://www.linkedin.com/in/kahmile-a-whitby/"
+  },
   "professionalInterests": [
     "Robotics",
     "Accessible Product Design",
