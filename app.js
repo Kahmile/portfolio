@@ -36,17 +36,17 @@
     document.title = page ? `${page} | ${SITE.name}` : `${SITE.name} | Engineering Portfolio`;
   }
 
-  // ---------- Projects dropdown ----------
+  // ---------- Hamburger menu ----------
+  // Two entries only: About Me, and Projects (opens the latest project; the sidebar lists the rest).
   function buildMenu() {
-    PROJECTS.forEach((project) => {
-      const link = el("a", { href: `#/project/${project.slug}`, "data-route": project.slug }, [
-        project.title,
-        project.period ? el("span", { class: "menu-date", text: project.period }) : null,
-      ]);
-      menu.append(el("li", {}, link));
+    menu.append(el("li", {}, el("a", { href: "#/about", "data-route": "about", text: "About Me" })));
+    const projectsLink = el("a", { href: `#/project/${PROJECTS[0].slug}`, "data-route": "projects", text: "Projects" });
+    projectsLink.addEventListener("click", () => {
+      // Always arrive with the project list collapsed, even if it was expanded earlier.
+      localStorage.setItem(SIDEBAR_KEY, "true");
+      if (location.hash === projectsLink.getAttribute("href")) route(); // same page: no hashchange fires
     });
-    menu.append(el("li", { class: "menu-separator", role: "presentation" }));
-    menu.append(el("li", {}, el("a", { href: `#/${INTERESTS_ROUTE}`, "data-route": INTERESTS_ROUTE, text: "More About Me" })));
+    menu.append(el("li", {}, projectsLink));
   }
 
   function menuLinks() {
@@ -212,7 +212,7 @@
   const SIDEBAR_KEY = "sidebarCollapsed";
   function buildSidebar(current) {
     const stored = localStorage.getItem(SIDEBAR_KEY);
-    const collapsed = stored === null ? window.matchMedia("(max-width: 860px)").matches : stored === "true";
+    const collapsed = stored === null || stored === "true"; // collapsed unless the visitor expanded it
 
     const list = el("ul", { class: "sidebar-list", id: "sidebar-list" }, PROJECTS.map((project) => {
       const attrs = { href: `#/project/${project.slug}` };
@@ -329,14 +329,13 @@
     slideshow = null;
 
     let view;
-    let current = null;
+    let current = "about";
     const project = section === "project" && PROJECTS.find((p) => p.slug === slug);
     if (project) {
       view = renderProject(project);
-      current = project.slug;
+      current = "projects";
     } else if (section === INTERESTS_ROUTE) {
       view = renderAbout(true);
-      current = INTERESTS_ROUTE;
     } else {
       view = renderAbout(false);
     }
@@ -348,7 +347,7 @@
       else link.removeAttribute("aria-current");
     });
 
-    if (current === INTERESTS_ROUTE) {
+    if (section === INTERESTS_ROUTE) {
       // "More About Me" lives on the homepage: open it there and bring it into view.
       const moreToggle = document.getElementById("more-about-me");
       setTitle("More About Me");

@@ -89,9 +89,13 @@ a:hover { color: var(--accent-dark); }
   background: transparent;
   border: 2px solid rgba(255, 255, 255, 0.35);
   border-radius: 8px;
-  padding: 0.4rem 0.9rem;
+  padding: 0.55rem 0.7rem;
   cursor: pointer;
+  display: flex;
+  align-items: center;
 }
+.hamburger { display: flex; flex-direction: column; justify-content: space-between; width: 1.5rem; height: 1.1rem; }
+.hamburger span { display: block; height: 3px; border-radius: 2px; background: currentColor; }
 .dropdown-toggle:hover,
 .dropdown-toggle[aria-expanded="true"] { background: rgba(255, 255, 255, 0.12); }
 
@@ -99,7 +103,7 @@ a:hover { color: var(--accent-dark); }
   position: absolute;
   right: 0;
   top: calc(100% + 0.5rem);
-  width: min(28rem, calc(100vw - 2.5rem));
+  width: 12rem;
   margin: 0;
   padding: 0.4rem;
   list-style: none;
@@ -118,15 +122,11 @@ a:hover { color: var(--accent-dark); }
   color: var(--text);
   text-decoration: none;
   line-height: 1.35;
+  font-weight: 600;
 }
 .dropdown-menu a:hover,
 .dropdown-menu a:focus-visible { background: #e8f0fa; outline-offset: -3px; }
 .dropdown-menu a[aria-current="page"] { font-weight: 700; color: var(--accent-dark); }
-.dropdown-menu .menu-date { display: block; font-size: 0.8rem; color: var(--muted); }
-.dropdown-menu .menu-separator {
-  border-top: 1px solid var(--border);
-  margin: 0.4rem 0.4rem;
-}
 
 /* ---------- Layout ---------- */
 main {
