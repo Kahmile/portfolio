@@ -10,7 +10,7 @@
   --nav-text: #ffffff;
   --radius: 12px;
   --shadow: 0 2px 12px rgba(19, 32, 46, 0.08);
-  --max: 1100px;
+  --max: 1400px;
   font-size: 112.5%; /* 18px base for readability */
 }
 
@@ -288,15 +288,13 @@ h1:focus { outline: none; }
 .slide-hint { margin: 0.5rem 0 0; text-align: center; color: var(--muted); font-size: 0.85rem; }
 
 /* ---------- Project sidebar ---------- */
-main.wide { max-width: 1400px; }
-
-.project-layout {
+.page-layout {
   display: grid;
   grid-template-columns: 15rem minmax(0, 1fr);
   gap: 2rem;
   align-items: start;
 }
-.project-layout:has(.sidebar.collapsed) { grid-template-columns: auto minmax(0, 1fr); }
+.page-layout:has(.sidebar.collapsed) { grid-template-columns: auto minmax(0, 1fr); }
 
 .sidebar {
   position: sticky;
@@ -397,8 +395,8 @@ main.wide { max-width: 1400px; }
   .project { grid-template-columns: minmax(0, 1fr); }
   .about img { max-width: 260px; margin: 0 auto; }
   .slideshow { position: static; order: -1; }
-  .project-layout,
-  .project-layout:has(.sidebar.collapsed) { grid-template-columns: minmax(0, 1fr); gap: 1.25rem; }
+  .page-layout,
+  .page-layout:has(.sidebar.collapsed) { grid-template-columns: minmax(0, 1fr); gap: 1.25rem; }
   .sidebar { position: static; max-height: none; }
   .sidebar.collapsed .sidebar-toggle { width: 100%; }
   .pager-link { max-width: none; flex: 1; }

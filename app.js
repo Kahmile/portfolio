@@ -193,8 +193,7 @@
     const content = el("section", { class: "project" }, [details]);
     if (project.slides.length) content.append(buildSlideshow(project));
 
-    const column = el("div", { class: "project-main" }, [content, buildPager(index)]);
-    return el("div", { class: "project-layout" }, [buildSidebar(project), column]);
+    return el("div", { class: "project-main" }, [content, buildPager(index)]);
   }
 
   // Previous / next project links so visitors can move between projects without the top menu.
@@ -342,8 +341,8 @@
       view = renderAbout(false);
     }
 
-    main.replaceChildren(view);
-    main.classList.toggle("wide", Boolean(project));
+    // Every page gets the collapsible project list on the left.
+    main.replaceChildren(el("div", { class: "page-layout" }, [buildSidebar(project || null), view]));
     menuLinks().forEach((link) => {
       if (link.dataset.route === current) link.setAttribute("aria-current", "page");
       else link.removeAttribute("aria-current");
