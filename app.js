@@ -60,13 +60,43 @@
   }
 
   function closeMenu(returnFocus) {
+    openedByHover = false;
     if (menu.hidden) return;
     menu.hidden = true;
     toggle.setAttribute("aria-expanded", "false");
     if (returnFocus) toggle.focus();
   }
 
-  toggle.addEventListener("click", () => (menu.hidden ? openMenu(false) : closeMenu(false)));
+  // Mouse users get hover-to-open; a click while hover-opened "pins" the menu instead of closing it.
+  // Touch and keyboard users keep click / Enter / ArrowDown behavior.
+  const dropdown = document.querySelector(".dropdown");
+  let openedByHover = false;
+  let hoverCloseTimer = null;
+
+  dropdown.addEventListener("pointerenter", (event) => {
+    if (event.pointerType !== "mouse") return;
+    clearTimeout(hoverCloseTimer);
+    if (menu.hidden) {
+      openMenu(false);
+      openedByHover = true;
+    }
+  });
+
+  dropdown.addEventListener("pointerleave", (event) => {
+    if (event.pointerType !== "mouse" || !openedByHover) return;
+    hoverCloseTimer = setTimeout(() => {
+      if (openedByHover) closeMenu(false);
+    }, 250); // grace period for crossing the gap between button and menu
+  });
+
+  toggle.addEventListener("click", () => {
+    if (openedByHover) {
+      openedByHover = false; // pin it open
+      return;
+    }
+    if (menu.hidden) openMenu(false);
+    else closeMenu(false);
+  });
 
   toggle.addEventListener("keydown", (event) => {
     if (event.key === "ArrowDown") {
@@ -103,12 +133,12 @@
     if (!event.target.closest(".dropdown")) closeMenu(false);
   });
 
-  document.querySelector(".dropdown").addEventListener("focusout", (event) => {
+  dropdown.addEventListener("focusout", (event) => {
     if (!event.currentTarget.contains(event.relatedTarget)) closeMenu(false);
   });
 
   // ---------- Views ----------
-  function renderAbout() {
+  function renderAbout(expandMore) {
     setTitle("");
     const bio = el("div", { class: "bio" }, [
       el("h1", { tabindex: "-1", id: "about-heading", text: SITE.name }),
@@ -127,31 +157,88 @@
       el("div", { class: "cta" }, [
         el("a", { class: "button", href: `#/project/${PROJECTS[0].slug}`, text: "View latest project" }),
       ]),
-      el("p", { class: "more-link" }, el("a", { href: `#/${INTERESTS_ROUTE}`, text: "More about me" })),
+      buildMoreAboutMe(expandMore),
     ]);
     const photo = el("img", { src: SITE.profile.src, alt: SITE.profile.alt, width: "340", height: "340" });
     return el("section", { class: "about", "aria-labelledby": "about-heading" }, [photo, bio]);
   }
 
-  function renderInterests() {
-    setTitle("More About Me");
-    return el("section", { class: "interests" }, [
-      el("h1", { tabindex: "-1", text: "More About Me" }),
-      el("p", { class: "eyebrow", text: "Interests outside of engineering" }),
-      el("div", { class: "card" }, el("ul", {}, SITE.interests.map((item) => el("li", { text: item })))),
+  // Expand/collapse "More About Me" panel at the bottom of the homepage (no page switch needed).
+  function buildMoreAboutMe(expanded) {
+    const panel = el("div", { class: "more-panel", id: "more-about-me-panel" }, [
+      el("p", { class: "more-intro", text: "My interests beyond engineering include:" }),
+      el("ul", {}, SITE.interests.map((item) => el("li", { text: item }))),
     ]);
+    const button = el("button", {
+      class: "more-toggle", type: "button", id: "more-about-me",
+      "aria-expanded": String(expanded), "aria-controls": panel.id,
+    }, [el("span", { class: "chevron", "aria-hidden": "true", text: "▸" }), " More About Me"]);
+    panel.hidden = !expanded;
+    button.addEventListener("click", () => {
+      const open = button.getAttribute("aria-expanded") !== "true";
+      button.setAttribute("aria-expanded", String(open));
+      panel.hidden = !open;
+    });
+    return el("section", { class: "more-about" }, [el("h2", {}, button), panel]);
   }
 
   function renderProject(project) {
     setTitle(project.title);
+    const index = PROJECTS.indexOf(project);
     const details = el("div", { class: "project-details" }, [
       el("h1", { tabindex: "-1", text: project.title }),
       project.period ? el("p", { class: "eyebrow", text: project.period }) : null,
       el("div", { class: "card" }, el("ul", { class: "project-bullets" }, project.bullets.map(bulletItem))),
     ]);
-    const container = el("section", { class: "project" }, [details]);
-    if (project.slides.length) container.append(buildSlideshow(project));
-    return container;
+    const content = el("section", { class: "project" }, [details]);
+    if (project.slides.length) content.append(buildSlideshow(project));
+
+    const column = el("div", { class: "project-main" }, [content, buildPager(index)]);
+    return el("div", { class: "project-layout" }, [buildSidebar(project), column]);
+  }
+
+  // Previous / next project links so visitors can move between projects without the top menu.
+  function buildPager(index) {
+    const link = (project, direction) => el("a", { class: `pager-link ${direction}`, href: `#/project/${project.slug}` }, [
+      el("span", { class: "pager-label", text: direction === "prev" ? "← Previous project" : "Next project →" }),
+      el("span", { class: "pager-title", text: project.title }),
+    ]);
+    return el("nav", { class: "pager", "aria-label": "Project navigation" }, [
+      index > 0 ? link(PROJECTS[index - 1], "prev") : el("span"),
+      index < PROJECTS.length - 1 ? link(PROJECTS[index + 1], "next") : el("span"),
+    ]);
+  }
+
+  // Collapsible left-hand list of all projects; open/closed choice is remembered between visits.
+  const SIDEBAR_KEY = "sidebarCollapsed";
+  function buildSidebar(current) {
+    const stored = localStorage.getItem(SIDEBAR_KEY);
+    const collapsed = stored === null ? window.matchMedia("(max-width: 860px)").matches : stored === "true";
+
+    const list = el("ul", { class: "sidebar-list", id: "sidebar-list" }, PROJECTS.map((project) => {
+      const attrs = { href: `#/project/${project.slug}` };
+      if (project === current) attrs["aria-current"] = "page";
+      return el("li", {}, el("a", attrs, project.title));
+    }));
+    const button = el("button", {
+      class: "sidebar-toggle", type: "button", "aria-controls": list.id, "aria-expanded": String(!collapsed),
+      title: collapsed ? "Show project list" : "Hide project list",
+    }, [el("span", { class: "chevron", "aria-hidden": "true", text: "▸" }), el("span", { class: "sidebar-heading", text: "All Projects" })]);
+
+    const aside = el("nav", { class: "sidebar", "aria-label": "All projects" }, [button, list]);
+    function apply(isCollapsed) {
+      aside.classList.toggle("collapsed", isCollapsed);
+      list.hidden = isCollapsed;
+      button.setAttribute("aria-expanded", String(!isCollapsed));
+      button.title = isCollapsed ? "Show project list" : "Hide project list";
+    }
+    apply(collapsed);
+    button.addEventListener("click", () => {
+      const isCollapsed = button.getAttribute("aria-expanded") === "true";
+      localStorage.setItem(SIDEBAR_KEY, String(isCollapsed));
+      apply(isCollapsed);
+    });
+    return aside;
   }
 
   // ---------- Slideshow ----------
@@ -249,21 +336,30 @@
       view = renderProject(project);
       current = project.slug;
     } else if (section === INTERESTS_ROUTE) {
-      view = renderInterests();
+      view = renderAbout(true);
       current = INTERESTS_ROUTE;
     } else {
-      view = renderAbout();
+      view = renderAbout(false);
     }
 
     main.replaceChildren(view);
+    main.classList.toggle("wide", Boolean(project));
     menuLinks().forEach((link) => {
       if (link.dataset.route === current) link.setAttribute("aria-current", "page");
       else link.removeAttribute("aria-current");
     });
 
-    window.scrollTo(0, 0);
-    // Move focus to the new heading on navigation so screen readers announce the page change.
-    if (routed) main.querySelector("h1").focus({ preventScroll: true });
+    if (current === INTERESTS_ROUTE) {
+      // "More About Me" lives on the homepage: open it there and bring it into view.
+      const moreToggle = document.getElementById("more-about-me");
+      setTitle("More About Me");
+      moreToggle.closest(".more-about").scrollIntoView({ block: "start" });
+      if (routed) moreToggle.focus({ preventScroll: true });
+    } else {
+      window.scrollTo(0, 0);
+      // Move focus to the new heading on navigation so screen readers announce the page change.
+      if (routed) main.querySelector("h1").focus({ preventScroll: true });
+    }
     routed = true;
   }
 

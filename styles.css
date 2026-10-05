@@ -185,7 +185,31 @@ h1:focus { outline: none; }
 .about .bio .contact li { margin-bottom: 0.25rem; overflow-wrap: anywhere; }
 .about .bio .tagline { font-weight: 600; color: var(--muted); }
 .about .cta { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.25rem; }
-.about .bio .more-link { font-size: 0.85rem; margin: 2.5rem 0 0; }
+/* "More About Me" expand/collapse panel at the bottom of the homepage */
+.more-about {
+  scroll-margin-top: 6rem; /* keep it clear of the sticky header when scrolled into view */
+  margin-top: 2.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+.about .bio .more-about h2 { margin: 0; font-size: 1rem; }
+.more-toggle {
+  font: inherit;
+  font-weight: 700;
+  color: var(--accent-dark);
+  background: none;
+  border: 0;
+  padding: 0.25rem 0;
+  cursor: pointer;
+}
+.more-toggle:hover { text-decoration: underline; }
+.chevron { display: inline-block; transition: transform 0.15s ease; }
+[aria-expanded="true"] > .chevron { transform: rotate(90deg); }
+.more-panel { padding: 0.9rem 0 0 1.25rem; } /* more room below the heading... */
+.about .bio .more-panel .more-intro { font-size: 0.95rem; margin: 0 0 0.3rem; } /* ...less above the bullets */
+.more-panel ul { margin: 0; padding-left: 1.2rem; font-size: 0.95rem; }
+.more-panel li { margin-bottom: 0.25rem; }
 
 .button {
   display: inline-block;
@@ -263,10 +287,88 @@ h1:focus { outline: none; }
 .slide-counter { margin: 0.1rem 0 0; color: var(--muted); font-size: 0.9rem; }
 .slide-hint { margin: 0.5rem 0 0; text-align: center; color: var(--muted); font-size: 0.85rem; }
 
-/* ---------- Interests ---------- */
-.interests { max-width: 44rem; }
-.interests ul { margin: 0; padding-left: 1.2rem; font-size: 1.1rem; }
-.interests li { margin-bottom: 0.5rem; }
+/* ---------- Project sidebar ---------- */
+main.wide { max-width: 1400px; }
+
+.project-layout {
+  display: grid;
+  grid-template-columns: 15rem minmax(0, 1fr);
+  gap: 2rem;
+  align-items: start;
+}
+.project-layout:has(.sidebar.collapsed) { grid-template-columns: auto minmax(0, 1fr); }
+
+.sidebar {
+  position: sticky;
+  top: 5.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 0.5rem;
+  max-height: calc(100vh - 7rem);
+  overflow-y: auto;
+}
+
+.sidebar-toggle {
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--accent-dark);
+  background: none;
+  border: 0;
+  border-radius: 8px;
+  padding: 0.5rem 0.6rem;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.sidebar-toggle:hover { background: #e8f0fa; }
+.sidebar.collapsed .sidebar-toggle { width: auto; }
+
+.sidebar-list { list-style: none; margin: 0.25rem 0 0; padding: 0; }
+.sidebar-list a {
+  display: block;
+  padding: 0.5rem 0.6rem;
+  border-radius: 8px;
+  color: var(--text);
+  text-decoration: none;
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
+.sidebar-list a:hover { background: #e8f0fa; }
+.sidebar-list a[aria-current="page"] {
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* ---------- Previous / next project ---------- */
+.pager {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+.pager-link {
+  display: flex;
+  flex-direction: column;
+  max-width: 48%;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--surface);
+  text-decoration: none;
+}
+.pager-link:hover { background: #e8f0fa; }
+.pager-link.next { margin-left: auto; text-align: right; }
+.pager-label { font-weight: 700; font-size: 0.9rem; }
+.pager-title { color: var(--text); font-size: 0.95rem; }
 
 .visually-hidden {
   position: absolute !important;
@@ -292,9 +394,14 @@ h1:focus { outline: none; }
 /* ---------- Responsive ---------- */
 @media (max-width: 860px) {
   .about,
-  .project { grid-template-columns: 1fr; }
+  .project { grid-template-columns: minmax(0, 1fr); }
   .about img { max-width: 260px; margin: 0 auto; }
   .slideshow { position: static; order: -1; }
+  .project-layout,
+  .project-layout:has(.sidebar.collapsed) { grid-template-columns: minmax(0, 1fr); gap: 1.25rem; }
+  .sidebar { position: static; max-height: none; }
+  .sidebar.collapsed .sidebar-toggle { width: 100%; }
+  .pager-link { max-width: none; flex: 1; }
   .slide-frame { height: min(60vh, 520px); }
 }
 
