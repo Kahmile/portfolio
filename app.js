@@ -214,8 +214,8 @@
   }
 
   // Collapsible left-hand list of all projects.
-  // Starts collapsed on every page load; toggling carries over while moving between pages.
-  let sidebarCollapsed = true;
+  // Starts open on every page load; toggling carries over while moving between pages.
+  let sidebarCollapsed = false;
   function buildSidebar(current) {
     const collapsed = sidebarCollapsed;
 
