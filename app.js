@@ -10,6 +10,11 @@
   const menu = document.getElementById("projects-menu");
 
   let slideshow = null; // active slideshow controller, if a project view is open
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  // Bold right-pointing arrow; the "previous" button flips it with CSS.
+  const ARROW_SVG = '<svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" focusable="false">' +
+    '<path d="M4 12h14M12 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="3.5" ' +
+    'stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
   // ---------- Helpers ----------
   function el(tag, attrs, children) {
@@ -259,24 +264,28 @@
       counter,
     ]);
 
-    const prev = el("button", { class: "slide-btn", type: "button", "aria-label": "Previous slide", text: "←" });
-    const next = el("button", { class: "slide-btn", type: "button", "aria-label": "Next slide", text: "→" });
+    const prev = el("button", { class: "slide-btn", type: "button", "aria-label": "Previous slide" });
+    const next = el("button", { class: "slide-btn", type: "button", "aria-label": "Next slide" });
+    prev.innerHTML = ARROW_SVG;
+    next.innerHTML = ARROW_SVG;
+    prev.firstChild.classList.add("flip");
 
-    function show(newIndex) {
+    // autoplay: start videos when the visitor navigates to them (not on first page load).
+    function show(newIndex, autoplay = true) {
       index = (newIndex + slides.length) % slides.length;
       const slide = slides[index];
       video.pause();
       frame.replaceChildren();
       if (slide.type === "video") {
-        video.src = slide.src;
-        video.poster = slide.poster || "";
+        video.src = encodeURI(slide.src);
+        video.poster = slide.poster ? encodeURI(slide.poster) : "";
         video.setAttribute("aria-label", slide.alt);
         video.setAttribute("aria-describedby", caption.id);
         frame.append(video);
       } else {
         video.removeAttribute("src");
         video.load();
-        img.src = slide.src;
+        img.src = encodeURI(slide.src);
         img.alt = slide.alt;
         frame.append(img);
       }
@@ -285,7 +294,15 @@
       counter.textContent = `${index + 1} / ${slides.length}`;
       // Warm the cache for the next image so clicking forward feels instant.
       const upcoming = slides[(index + 1) % slides.length];
-      if (upcoming.type === "image") new Image().src = upcoming.src;
+      if (upcoming.type === "image") new Image().src = encodeURI(upcoming.src);
+      if (slide.type === "video" && autoplay && !reducedMotion.matches) {
+        // Clicks/keypresses count as user interaction, so sound is allowed; fall back to muted if blocked.
+        video.muted = false;
+        video.play().catch(() => {
+          video.muted = true;
+          video.play().catch(() => {});
+        });
+      }
     }
 
     prev.addEventListener("click", () => show(index - 1));
@@ -297,7 +314,7 @@
       el("p", { class: "slide-hint", text: "Use the arrow buttons or your keyboard's ← → keys to browse." }),
     ]);
 
-    show(0);
+    show(0, false);
     slideshow = {
       prev: () => show(index - 1),
       next: () => show(index + 1),
