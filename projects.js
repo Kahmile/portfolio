@@ -293,7 +293,7 @@ window.PROJECTS = [
     "period": "Dec. 2023 - March 2024",
     "bullets": [
       "Developed Python code enabling the bot to navigate around obstacles based on sensor data",
-      "Wired ultrasonic sensor, servo motors, and battery pack to a micro:bit microcontroller via a power distribution board (PDB)",
+      "Wired ultrasonic sensor, servo motors, and battery pack to a micro bit microcontroller via a power distribution board (PDB)",
       "Assembled chassis and drivetrain using LEGO components",
       "Mounted electronic components and tested vehicle dynamics and obstacle detection"
     ],
@@ -302,7 +302,7 @@ window.PROJECTS = [
         "type": "image",
         "src": "assets/projects/autonomous-navigation-robot/angled-view.jpg",
         "caption": "Assembled Navigation Robot (Angled View)",
-        "alt": "Angled view of LEGO robot with ultrasonic sensor, micro:bit, and servo drivetrain on wooden table"
+        "alt": "Angled view of LEGO robot with ultrasonic sensor, micro bit, and servo drivetrain on wooden table"
       },
       {
         "type": "image",
@@ -314,7 +314,7 @@ window.PROJECTS = [
         "type": "image",
         "src": "assets/projects/autonomous-navigation-robot/bot-front-view-close-drivetrain.jpg",
         "caption": "Servo Motor Drivetrain (Front)",
-        "alt": "Front view of zip-tied servo motors driving LEGO gears and wheels beneath micro:bit board"
+        "alt": "Front view of zip-tied servo motors driving LEGO gears and wheels beneath micro bit board"
       },
       {
         "type": "image",
