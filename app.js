@@ -48,7 +48,7 @@
     const projectsLink = el("a", { href: `#/project/${PROJECTS[0].slug}`, "data-route": "projects", text: "Projects" });
     projectsLink.addEventListener("click", () => {
       // Always arrive with the project list collapsed, even if it was expanded earlier.
-      localStorage.setItem(SIDEBAR_KEY, "true");
+      sidebarCollapsed = true;
       if (location.hash === projectsLink.getAttribute("href")) route(); // same page: no hashchange fires
     });
     menu.append(el("li", {}, projectsLink));
@@ -213,11 +213,11 @@
     ]);
   }
 
-  // Collapsible left-hand list of all projects; open/closed choice is remembered between visits.
-  const SIDEBAR_KEY = "sidebarCollapsed";
+  // Collapsible left-hand list of all projects.
+  // Starts collapsed on every page load; toggling carries over while moving between pages.
+  let sidebarCollapsed = true;
   function buildSidebar(current) {
-    const stored = localStorage.getItem(SIDEBAR_KEY);
-    const collapsed = stored === null || stored === "true"; // collapsed unless the visitor expanded it
+    const collapsed = sidebarCollapsed;
 
     const list = el("ul", { class: "sidebar-list", id: "sidebar-list" }, PROJECTS.map((project) => {
       const attrs = { href: `#/project/${project.slug}` };
@@ -239,7 +239,7 @@
     apply(collapsed);
     button.addEventListener("click", () => {
       const isCollapsed = button.getAttribute("aria-expanded") === "true";
-      localStorage.setItem(SIDEBAR_KEY, String(isCollapsed));
+      sidebarCollapsed = isCollapsed;
       apply(isCollapsed);
     });
     return aside;
