@@ -251,7 +251,7 @@ window.PROJECTS = [
       "Conceptualized and designed a hobby-grade RC car with auditory and vibrational feedback to improve access for individuals with vision disabilities and to provide a richer user interface",
       "Conducted research and calculations to select and integrate the mechanical, electrical, and software components",
       "Assembled the car, wrote dynamics test code in C++, and programmed the radio controllers",
-      "Current progress: Integrating distance sensor data with PWM outputs for real-time collision avoidance",
+      "Latest progress: Integrating distance sensor data with PWM outputs for real-time collision avoidance",
       "Future development: Adding the auditory and vibration feedback system and aesthetic finishes"
     ],
     "slides": [
