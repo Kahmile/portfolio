@@ -3,7 +3,16 @@
 
   const SITE = window.SITE;
   const PROJECTS = window.PROJECTS;
-  const INTERESTS_ROUTE = "more-about-me";
+
+  // Every page's <base href> points at the site root ("./" on the homepage, "../../" on project pages).
+  // Freeze it as an absolute URL so relative links keep working after history.pushState changes the address.
+  const base = document.querySelector("base");
+  base.setAttribute("href", base.href);
+  const ROOT = base.href; // e.g. https://kahmile.github.io/portfolio/
+  const ROOT_PATH = new URL(ROOT).pathname;
+  // _build/build.py loads each page with ?prerender to save fully rendered HTML for crawlers and AI tools.
+  const PRERENDER = new URLSearchParams(location.search).has("prerender");
+  let expandMoreOnce = false; // legacy "#/more-about-me" links open that panel on the homepage
 
   const main = document.getElementById("main");
   const toggle = document.getElementById("projects-toggle");
@@ -37,24 +46,103 @@
     return el("li", {}, [el("strong", { text: match[1] + ":" }), " " + match[2]]);
   }
 
-  function setTitle(page) {
-    document.title = page ? `${page} | ${SITE.name}` : `${SITE.name} | Engineering Portfolio`;
+  function esc(text) {
+    return String(text).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+  }
+
+  const projectPath = (project) => `projects/${project.slug}/`;
+  const absolute = (path) => SITE.url + encodeURI(path);
+
+  function summarize(text, limit = 160) {
+    if (text.length <= limit) return text;
+    return text.slice(0, text.lastIndexOf(" ", limit - 1)).replace(/[,;:]$/, "") + "…";
+  }
+
+  // ---------- Search / sharing metadata ----------
+  // Title, description, canonical URL, link-preview (Open Graph) tags, and schema.org structured data,
+  // updated for every page so prerendered HTML carries the right values.
+  function setMeta({ title, description, path, image, type, data }) {
+    const url = SITE.url + path;
+    document.title = title;
+    const set = (selector, attr, value) => document.head.querySelector(selector).setAttribute(attr, value);
+    set('meta[name="description"]', "content", description);
+    set('link[rel="canonical"]', "href", url);
+    set('meta[property="og:type"]', "content", type);
+    set('meta[property="og:title"]', "content", title);
+    set('meta[property="og:description"]', "content", description);
+    set('meta[property="og:url"]', "content", url);
+    set('meta[property="og:image"]', "content", image);
+    document.getElementById("structured-data").textContent = JSON.stringify(data);
+  }
+
+  function person() {
+    return {
+      "@type": "Person",
+      name: SITE.name,
+      url: SITE.url,
+      image: absolute(SITE.profile.src),
+      email: `mailto:${SITE.contact.email}`,
+      sameAs: [SITE.contact.linkedin],
+      affiliation: { "@type": "CollegeOrUniversity", name: SITE.affiliation },
+      knowsAbout: SITE.professionalInterests,
+      description: SITE.bio.join(" "),
+    };
+  }
+
+  function homeMeta() {
+    const title = `${SITE.name} | Engineering Portfolio`;
+    setMeta({
+      title,
+      description: summarize(SITE.bio.join(" ")),
+      path: "",
+      image: absolute(SITE.profile.src),
+      type: "profile",
+      data: {
+        "@context": "https://schema.org",
+        "@type": "ProfilePage",
+        name: title,
+        url: SITE.url,
+        mainEntity: person(),
+        hasPart: PROJECTS.map((p) => ({ "@type": "CreativeWork", name: p.title, url: SITE.url + projectPath(p) })),
+      },
+    });
+  }
+
+  function projectMeta(project) {
+    const images = project.slides.filter((s) => s.type === "image").map((s) => absolute(s.src));
+    setMeta({
+      title: `${project.title} | ${SITE.name}`,
+      description: summarize(project.bullets.join(" ")),
+      path: projectPath(project),
+      image: images[0] || absolute(SITE.profile.src),
+      type: "article",
+      data: {
+        "@context": "https://schema.org",
+        "@type": "CreativeWork",
+        name: project.title,
+        url: SITE.url + projectPath(project),
+        description: project.bullets.join(" "),
+        ...(project.period ? { temporalCoverage: project.period } : {}),
+        image: images,
+        author: { "@type": "Person", name: SITE.name, url: SITE.url },
+      },
+    });
   }
 
   // ---------- Hamburger menu ----------
   // Two entries only: About Me, and Projects (opens the latest project; the sidebar lists the rest).
   function buildMenu() {
-    menu.append(el("li", {}, el("a", { href: "#/about", "data-route": "about", text: "About Me" })));
-    const projectsLink = el("a", { href: `#/project/${PROJECTS[0].slug}`, "data-route": "projects", text: "Projects" });
+    menu.replaceChildren(); // prerendered pages already contain a copy of the menu
+    menu.append(el("li", {}, el("a", { href: "./", "data-route": "about", text: "About Me" })));
+    const projectsLink = el("a", { href: projectPath(PROJECTS[0]), "data-route": "projects", text: "Projects" });
     projectsLink.addEventListener("click", openWithSidebar);
     menu.append(el("li", {}, projectsLink));
   }
 
   // Used by the menu's "Projects" link and the "View latest project" button:
   // always arrive with the All Projects list expanded, even if the visitor collapsed it earlier.
-  function openWithSidebar(event) {
-    sidebarCollapsed = false;
-    if (location.hash === event.currentTarget.getAttribute("href")) route(); // same page: no hashchange fires
+  function openWithSidebar() {
+    sidebarCollapsed = false; // the page-link click handler further down does the navigation
   }
 
   function menuLinks() {
@@ -147,9 +235,8 @@
 
   // ---------- Views ----------
   function renderAbout(expandMore) {
-    const latestButton = el("a", { class: "button", href: `#/project/${PROJECTS[0].slug}`, text: "View latest project" });
+    const latestButton = el("a", { class: "button", href: projectPath(PROJECTS[0]), text: "View latest project" });
     latestButton.addEventListener("click", openWithSidebar);
-    setTitle("");
     const bio = el("div", { class: "bio" }, [
       el("h1", { tabindex: "-1", id: "about-heading", text: SITE.name }),
       el("h2", { text: "Introduction" }),
@@ -193,7 +280,6 @@
   }
 
   function renderProject(project) {
-    setTitle(project.title);
     const index = PROJECTS.indexOf(project);
     const details = el("div", { class: "project-details" }, [
       el("h1", { tabindex: "-1", text: project.title }),
@@ -208,7 +294,7 @@
 
   // Previous / next project links so visitors can move between projects without the top menu.
   function buildPager(index) {
-    const link = (project, direction) => el("a", { class: `pager-link ${direction}`, href: `#/project/${project.slug}` }, [
+    const link = (project, direction) => el("a", { class: `pager-link ${direction}`, href: projectPath(project) }, [
       el("span", { class: "pager-label", text: direction === "prev" ? "← Previous project" : "Next project →" }),
       el("span", { class: "pager-title", text: project.title }),
     ]);
@@ -225,7 +311,7 @@
     const collapsed = sidebarCollapsed;
 
     const list = el("ul", { class: "sidebar-list", id: "sidebar-list" }, PROJECTS.map((project) => {
-      const attrs = { href: `#/project/${project.slug}` };
+      const attrs = { href: projectPath(project) };
       if (project === current) attrs["aria-current"] = "page";
       return el("li", {}, el("a", attrs, project.title));
     }));
@@ -319,6 +405,7 @@
       el("p", { class: "slide-hint", text: "Use the arrow buttons or your keyboard's ← → keys to browse." }),
     ]);
 
+    if (PRERENDER) wrapper.append(staticGallery(slides));
     show(0, false);
     slideshow = {
       prev: () => show(index - 1),
@@ -326,6 +413,20 @@
       stop: () => video.pause(),
     };
     return wrapper;
+  }
+
+  // Full list of slides inside <noscript>: browsers ignore it, but crawlers and AI tools that don't
+  // run JavaScript can read every image, caption, and description.
+  function staticGallery(slides) {
+    const items = slides.map((s) => {
+      const media = s.type === "video"
+        ? `<a href="${esc(encodeURI(s.src))}">Video: ${esc(s.caption)}</a>`
+        : `<img src="${esc(encodeURI(s.src))}" alt="${esc(s.alt)}" loading="lazy">`;
+      return `<li><figure>${media}<figcaption>${esc(s.caption)}: ${esc(s.alt)}</figcaption></figure></li>`;
+    });
+    const noscript = document.createElement("noscript");
+    noscript.innerHTML = `<ol class="static-gallery">${items.join("")}</ol>`;
+    return noscript;
   }
 
   document.addEventListener("keydown", (event) => {
@@ -343,36 +444,44 @@
   });
 
   // ---------- Router ----------
+  // Pages are real URLs: "" (homepage) and "projects/<slug>/". Each has a prebuilt HTML file for
+  // direct visits and crawlers; clicks between pages swap content in place via the History API.
+  function pagePath(url) {
+    const path = decodeURI(url.pathname);
+    return path.startsWith(ROOT_PATH) ? path.slice(ROOT_PATH.length) : null;
+  }
+
+  function isPage(url) {
+    const path = pagePath(url);
+    return path === "" || path === "index.html" || /^projects\/[^/]+\/$/.test(path || "");
+  }
+
   function route() {
-    const hash = location.hash.replace(/^#\/?/, "");
-    const [section, slug] = hash.split("/");
+    const path = pagePath(location) || "";
+    const slug = (path.match(/^projects\/([^/]+)\/$/) || [])[1];
+    const project = slug && PROJECTS.find((p) => p.slug === slug);
+    if (!project && path !== "") history.replaceState(null, "", ROOT); // unknown address -> homepage
 
     if (slideshow) slideshow.stop();
     slideshow = null;
 
-    let view;
-    let current = "about";
-    const project = section === "project" && PROJECTS.find((p) => p.slug === slug);
-    if (project) {
-      view = renderProject(project);
-      current = "projects";
-    } else if (section === INTERESTS_ROUTE) {
-      view = renderAbout(true);
-    } else {
-      view = renderAbout(false);
-    }
+    const expandMore = expandMoreOnce;
+    expandMoreOnce = false;
+    const view = project ? renderProject(project) : renderAbout(expandMore);
+    if (project) projectMeta(project);
+    else homeMeta();
 
     // Every page gets the collapsible project list on the left.
     main.replaceChildren(el("div", { class: "page-layout" }, [buildSidebar(project || null), view]));
+    const current = project ? "projects" : "about";
     menuLinks().forEach((link) => {
       if (link.dataset.route === current) link.setAttribute("aria-current", "page");
       else link.removeAttribute("aria-current");
     });
 
-    if (section === INTERESTS_ROUTE) {
+    if (expandMore) {
       // "More About Me" lives on the homepage: open it there and bring it into view.
       const moreToggle = document.getElementById("more-about-me");
-      setTitle("More About Me");
       moreToggle.closest(".more-about").scrollIntoView({ block: "start" });
       if (routed) moreToggle.focus({ preventScroll: true });
     } else {
@@ -383,9 +492,41 @@
     routed = true;
   }
 
+  // Same-site page links navigate without a full reload (keeps the sidebar state, feels instant).
+  document.addEventListener("click", (event) => {
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest("a[href]");
+    if (!link) return;
+    if (link.classList.contains("skip-link")) {
+      // With <base>, "#main" would point at the homepage; just jump to this page's content.
+      event.preventDefault();
+      main.focus();
+      return;
+    }
+    if (link.target || link.hasAttribute("download")) return;
+    const url = new URL(link.href);
+    if (url.origin !== location.origin || !isPage(url)) return;
+    event.preventDefault();
+    if (url.href !== location.href) history.pushState(null, "", url.href);
+    route();
+  });
+
+  window.addEventListener("popstate", route);
+
+  // Old "#/..." links (from before pages had their own URLs) still land in the right place.
+  function upgradeLegacyHash() {
+    const match = location.hash.match(/^#\/(project\/([^/]+)|more-about-me|about)/);
+    if (!match) return;
+    if (match[2]) history.replaceState(null, "", ROOT + `projects/${match[2]}/`);
+    else {
+      expandMoreOnce = match[1] === "more-about-me";
+      history.replaceState(null, "", ROOT);
+    }
+  }
+
   let routed = false;
+  upgradeLegacyHash();
   buildMenu();
   document.getElementById("year").textContent = new Date().getFullYear();
-  window.addEventListener("hashchange", route);
   route();
 })();

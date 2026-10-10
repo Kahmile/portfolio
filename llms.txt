@@ -1,0 +1,120 @@
+# Kahmile A. Whitby — Engineering Portfolio
+
+> With a strong hands-on background, I am passionate about the product development process. My interests currently lie at the intersection of engineering and my lived experience with low vision. I am interested in helping consumer product companies make interfaces that are also usable by people with disabilities.
+
+- Website: https://kahmile.github.io/portfolio/
+- Affiliation: Massachusetts Institute of Technology
+- Email: kawhitby@mit.edu
+- LinkedIn: https://www.linkedin.com/in/kahmile-a-whitby/
+- Professional interests: Robotics, Accessible Product Design, Hardware Accessibility Consulting, Assistive Technology
+- Interests beyond engineering: Fashion design, Jewelry design, Cryptocurrency trading, Sunshine and beaches, Adaptive sports, Active outings: mini golf, axe throwing, ice skating, skiing, and more
+
+## Projects (most recent first)
+
+### Reaction-Wheel Inverted Pendulum Robot
+Page: https://kahmile.github.io/portfolio/projects/reaction-wheel-inverted-pendulum-robot/
+
+- Designed, simulated, and tuned a self-balancing reaction-wheel inverted pendulum capable of upright stabilization via reaction torque control
+- Implemented a Linear Quadratic Regulator (LQR) state-space control method
+- Maximized moment of inertia of flywheel while minimizing mass via a custom rim weighted flywheel design
+- Integrated a brushless gimbal motor, a 14-bit magnetic rotary encoder, and an STM32 microcontroller stacked with a SimpleFOC driver shield for low-latency closed-loop motor control
+
+Gallery:
+1. Image — Reaction-Wheel Pendulum Balancing Upright: Spinning flywheel atop upright aluminum pendulum arm, power supply and laptop on either side
+2. Video — Demo: Upright Balancing: Demonstration of the ability of the pendulum arm with mounted flywheel at the top end to pivot about a shaft at the bottom end. Arm is dropped twice, landing on rubber hard stop the second time to demonstrate uncontrolled system behavior. Then arm is moved into vertical position and let go and the control logic successfully begins to balance the arm by spinning the flywheel in the appropriate direction so that the reaction torque keeps the flywheel vertical.
+3. Image — Front View of Base Frame: Aluminum base frame with pivot shaft hub, clamped to wooden table, tilted arm above
+4. Image — Top View of Frame: Overhead view of aluminum frame with black sensor mount and blue cable on wood
+5. Image — Encoder Magnet Aligned with Sensor: Black magnet centering jig positioned close to encoder board inside 3D-printed mount/housing
+6. Image — Pivot Shaft with Magnet Centering Jig: Uncovered end of pivot shaft with black 3D-printed magnet centering jig attached, protruding from rear of aluminum frame
+7. Image — Magnetic Encoder in 3D-Printed Mount: Green AS5047P encoder board bolted inside the black 3D-printed bracket, lying face up on wooden table
+8. Image — Sensor Mount, Back View: Back of black 3D-printed sensor mount showing four hex nuts inside four hex recesses, lying on wood table
+9. Image — Sensor Mount, Top View: Top of black 3D-printed sensor mount with two top mounting holes near edge, lying on wood table
+10. Image — CubeMars GL35 Gimbal Motor, Front View: Face of CubeMars GL35 KV100 gimbal motor mounted to aluminum arm, four threaded mount holes can be seen, tan wall behind
+11. Image — CubeMars Gimbal Motor, Side View: Side profile of gimbal motor mounted to aluminum arm, wooden table behind, data and phase wires of motor lead away from arm
+12. Image — Mounted Steel Flywheel: Circular flywheel with three curved spokes bolted to gimbal motor at one end of aluminum arm, tan wall behind
+13. Image — STM32 with Mounted SimpleFOC Shield: Dark blue SimpleFOC shield mounted to white STM32 board with power and motor wires
+14. Video — Demo: Disturbance Rejection: Pendulum arm now has letter sized piece of cardboard taped to it. After moved to vertical position and balancing initiates, a black and white sneaker is used to bump and disturb the pendulum a few times, then nerf darts are fired at the arm which still successfully balances.
+
+### Tray-Bussing Mobile Robot (2.12 Intro to Robotics)
+Page: https://kahmile.github.io/portfolio/projects/tray-bussing-mobile-robot/
+
+- Awarded Most Valuable Engineer (MVE): Voted MVE by teammates for leading the end-to-end mechanical architecture, hardware assembly, and component sourcing/procurement
+- System Objective: Designed and built a mobile robot capable of autonomously securing and bussing a dinner tray from a food prep area to a dining table. Extra points awarded for traversing a ramp while balancing tray and for delivering dishwasher basket to dishwashing station
+- Spring-Assisted Servo Gripper: Co-Engineered a custom tray-lip pinching end-effector, passively held closed by spring tension, paired with a high-torque goBILDA servo motor to amplify clamping force during transport and open the rubber-padded jaws for release
+- Decoupled 2-DOF Belt-Driven Arm: Constructed a vertical goBILDA aluminum U-channel tower supporting a two-link robotic arm driven by two separate timing-belt transmissions, allowing each link to rotate independently without kinematic coupling
+- Low-COM Tank Drive & Odometry Optimization: Designed a belt-driven chassis featuring large rugged off-road tires for ramp traction, a compact wheelbase for more accurate wheel odometry, and low-mounted motors to minimize the center of mass and prevent tipping while carrying payloads on inclines
+
+Gallery:
+1. Image — Full Robot, Right View: Right side of robot with 2-DOF belt-driven arm semi-extended above goBILDA U-channel tower, wired electronics and off-road tires on chassis, sitting in green-taped box on lab table
+2. Image — Belt-Driven Arm, Right View: Close right view of two-link aluminum arm with black timing belt and pulleys at elbow joint, spring-loaded gripper at tip, lab chairs and shelving behind
+3. Image — 2-DOF Arm and Gripper, Front View: Front view of arm raised vertically from tower, rubber-padded gripper jaws across top, timing belts and yellow goBILDA motors at base, window behind
+4. Image — Tower, Electronics, and Chassis, Front View: Front of robot showing aluminum U-channel tower over chassis packed with wiring, blue depth camera, controller boards, and black off-road tires on green-taped table
+5. Image — Full Robot, Left View: Left side of robot with arm semi-extended upward from tower, goBILDA motor on tower side, off-road tires, remote controller on table in front
+6. Image — Arm in Resting Position: Left view of two-link arm folded down in resting position, gripper resting on forward U-channel support, timing belts and pulleys along tower side
+7. Image — Extended Arm, Back View: Back view of robot with arm extended straight up, servo and red wire running along link, two timing belts and side-mounted goBILDA motors on tower
+8. Image — Spring-Assisted Servo Gripper, Top View: Top view of goBILDA 2000-0025-0002 torque servo mounted to gripper bracket, two extension springs holding rubber-padded jaw closed
+9. Video — Test: Dishwasher Basket Extraction: Robot is teleoperated alongside a table holding a pink tray with a blue dish basket full of blue dishes. The arm reaches over and lifts the tray and basket off the table, then the robot drives away across the lab floor carrying them raised overhead.
+10. Video — Test: Empty Tray Depositing: Robot holds an empty pink tray in its gripper with the arm extended forward and drives up to a gray box station on an aluminum extrusion frame. The arm lowers the tray onto the top of the station, and the gripper releases it so the tray stays resting there.
+11. Image — Most Valuable Engineer Award: MIT Mechanical Engineering 2.12 certificate awarding Kahmile Whitby the Most Valuable Engineer Award, F9 Mobile Robot Group, May 6, 2026, with Robotics medal
+12. Image — Team Photo with Robot: Seven team members posing around the robot on a wooden pedestal in a lecture hall, projection screen behind, table of gold trophies and microphones in front
+
+### 3D CAD Accessibility Project
+Dates: February-May  2025
+Page: https://kahmile.github.io/portfolio/projects/3d-cad-accessibility-project/
+
+- Co-led the design and development of a system that translates complex 3D CAD models into navigable 2D cross-sections on a tactile pin-array display, directly addressing the accessibility gap for Blind and Low Vision (BLV) users in engineering fields
+- Championed user-centered design as the project's subject matter expert on BLV accessibility: designed intuitive 3D mouse controls for model manipulation, conducted user testing on the final system, and identified critical software bugs and limitations to guide future development
+- Conducted extensive technical research on existing assistive technologies, including academic refreshable 3D displays from the MIT Media Lab and commercial 2D tactile graphics devices
+- Authored a Python script to improve the slicing-parameter input process for users, and helped teammates debug the web application during system integration
+
+Gallery:
+1. Image — Tactile Pin-Array Display: Black Graphiti tactile pin-array display angled on white background, raised pins forming a graphic
+2. Image — 3D Mouse Controller: Top-down view of black 3Dconnexion 3D mouse with blue-ringed knob on white background
+
+### Audio-Haptic RC Car
+Dates: June 2024 - TBD
+Page: https://kahmile.github.io/portfolio/projects/audio-haptic-rc-car/
+
+- Conceptualized and designed a hobby-grade RC car with auditory and vibrational feedback to improve access for individuals with vision disabilities and to provide a richer user interface
+- Conducted research and calculations to select and integrate the mechanical, electrical, and software components
+- Assembled the car, wrote dynamics test code in C++, and programmed the radio controllers
+- Latest progress: Integrating distance sensor data with PWM outputs for real-time collision avoidance
+- Future development: Adding the auditory and vibration feedback system and aesthetic finishes
+
+Gallery:
+1. Image — Angled View with Chassis, Radio and Microcontroller: RC car chassis beside RadioLink transmitter and microcontroller on wooden workbench, black pegboard behind
+2. Image — Chassis with Electronics Board and Sensor Testing Mount: RC chassis with wired breadboard on clear platform beside laptop showing code on desk
+3. Image — Close-Up of All-Wheel Drive Gearbox: Motor, spur gear, and pinion gearbox on carbon fiber chassis, living room behind
+4. Image — Body Shell with 360 Degree LIDAR: White SUV-style body shell with black LIDAR on roof, on wooden bench before pegboard
+5. Image — Close-Up of 360 Degree LIDAR: Close-up of black circular LIDAR unit mounted on white body shell roof, pegboard behind
+
+### Autonomous Navigation Robot
+Dates: Dec. 2023 - March 2024
+Page: https://kahmile.github.io/portfolio/projects/autonomous-navigation-robot/
+
+- Developed Python code enabling the bot to navigate around obstacles based on sensor data
+- Wired ultrasonic sensor, servo motors, and battery pack to a micro bit microcontroller via a power distribution board (PDB)
+- Assembled chassis and drivetrain using LEGO components
+- Mounted electronic components and tested vehicle dynamics and obstacle detection
+
+Gallery:
+1. Image — Assembled Navigation Robot (Angled View): Angled view of LEGO robot with ultrasonic sensor, micro bit, and servo drivetrain on wooden table
+2. Image — Ultrasonic Sensor Mount (Front): Ultrasonic sensor rubber-banded atop gray LEGO mount, wires running down, textured white wall behind
+3. Image — Servo Motor Drivetrain (Front): Front view of zip-tied servo motors driving LEGO gears and wheels beneath micro bit board
+4. Image — LEGO Chassis and Sensor Mast (Side): Side view of LEGO robot chassis with raised ultrasonic sensor on a wooden table
+
+### MIT Solar Electric Vehicle Team Suspension Parts
+Dates: Sept. 2019 - March 2020
+Page: https://kahmile.github.io/portfolio/projects/mit-solar-electric-vehicle-team-suspension-parts/
+
+- Collaborated with team to manufacture a street-legal, solar-powered electric car to compete in a race
+- Designed toolpaths for front suspension parts in SolidWorks and manufactured them using shop tools
+- Car placed first in the 2021 American Solar Challenge
+
+Gallery:
+1. Image — Shock Mount on Mill: Aluminum shock mount clamped in mill vise beneath end mill, surrounded by metal chips
+2. Image — Front Shock Mount Finished: Machined aluminum shock mount with two angled tabs resting on a gray workbench
+3. Image — Left Upper Arm Tube Joint: Aluminum tube joint threaded onto a dark tube, held against a white surface
+4. Image — Left and Right Upper Arm Tube Joint: Two mirrored upper arm tubes with aluminum joints and rod ends on a gray surface
+5. Image — Assembled Suspension: Front wheel mounted on suspension arms and shock inside the car's carbon fiber chassis
+6. Image — Nimbus Body Shell: White Nimbus body shell sections resting on foam blocks inside a garage workshop

@@ -410,3 +410,7 @@ h1:focus { outline: none; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
 }
+
+/* Text-only fallback gallery (shown only when JavaScript is off; crawlers read it too) */
+.static-gallery { margin: 1rem 0 0; padding-left: 1.2rem; }
+.static-gallery img { max-width: 100%; height: auto; border-radius: var(--radius); }

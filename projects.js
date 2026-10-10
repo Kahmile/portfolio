@@ -3,6 +3,8 @@
 // alt (15 words or fewer, read by screen readers), and optional poster for videos.
 window.SITE = {
   "name": "Kahmile A. Whitby",
+  "url": "https://kahmile.github.io/portfolio/",
+  "affiliation": "Massachusetts Institute of Technology",
   "profile": {
     "src": "assets/profile/profile.jpg",
     "alt": "Kahmile A. Whitby smiling in tinted aviator glasses and a pink patterned polo shirt."
