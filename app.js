@@ -46,12 +46,15 @@
   function buildMenu() {
     menu.append(el("li", {}, el("a", { href: "#/about", "data-route": "about", text: "About Me" })));
     const projectsLink = el("a", { href: `#/project/${PROJECTS[0].slug}`, "data-route": "projects", text: "Projects" });
-    projectsLink.addEventListener("click", () => {
-      // Always arrive with the project list collapsed, even if it was expanded earlier.
-      sidebarCollapsed = true;
-      if (location.hash === projectsLink.getAttribute("href")) route(); // same page: no hashchange fires
-    });
+    projectsLink.addEventListener("click", openWithSidebar);
     menu.append(el("li", {}, projectsLink));
+  }
+
+  // Used by the menu's "Projects" link and the "View latest project" button:
+  // always arrive with the All Projects list expanded, even if the visitor collapsed it earlier.
+  function openWithSidebar(event) {
+    sidebarCollapsed = false;
+    if (location.hash === event.currentTarget.getAttribute("href")) route(); // same page: no hashchange fires
   }
 
   function menuLinks() {
@@ -144,6 +147,8 @@
 
   // ---------- Views ----------
   function renderAbout(expandMore) {
+    const latestButton = el("a", { class: "button", href: `#/project/${PROJECTS[0].slug}`, text: "View latest project" });
+    latestButton.addEventListener("click", openWithSidebar);
     setTitle("");
     const bio = el("div", { class: "bio" }, [
       el("h1", { tabindex: "-1", id: "about-heading", text: SITE.name }),
@@ -160,7 +165,7 @@
         }, el("span", { class: "visually-hidden", text: " (opens in a new tab)" }))]),
       ]),
       el("div", { class: "cta" }, [
-        el("a", { class: "button", href: `#/project/${PROJECTS[0].slug}`, text: "View latest project" }),
+        latestButton,
       ]),
       buildMoreAboutMe(expandMore),
     ]);
