@@ -239,6 +239,30 @@ window.PROJECTS = [
       },
       {
         "type": "image",
+        "src": "assets/projects/3d-cad-accessibility-project/cropped_parameter_entry.png",
+        "caption": "3D Model Slicer: Parameter Entry",
+        "alt": "Starting web app screen where user can input their desired parameters including the file name of the 3D model they want to slice, the direction vector that defines the cross section cutting plane, the number of slices, and the index of the slice they want to start on."
+      },
+      {
+        "type": "image",
+        "src": "assets/projects/3d-cad-accessibility-project/cropped_slices_generated.png",
+        "caption": "Generated Slice Preview",
+        "alt": "View of the web app after the generate slice button has been pressed. A preview of a cross section resembling a three lobed fidget spinner can be seen as well as a full screen button."
+      },
+      {
+        "type": "image",
+        "src": "assets/projects/3d-cad-accessibility-project/slice_3_full screen_viewer.png",
+        "caption": "Cycloidal Gear Slice 3 of 10 (Full Screen)",
+        "alt": "Full screen view of slice 3. A white fidget spinner like region on a black background."
+      },
+      {
+        "type": "image",
+        "src": "assets/projects/3d-cad-accessibility-project/slice_10_full screen_viewer.png",
+        "caption": "Cycloidal Gear Slice 10 of 10 (Full Screen)",
+        "alt": "Full screen view of slice 10, a counterclockwise rotation of a few degrees of slice 3."
+      },
+      {
+        "type": "image",
         "src": "assets/projects/3d-cad-accessibility-project/tactile-display-and-3d-mouse-2.jpg",
         "caption": "3D Mouse Controller",
         "alt": "Top-down view of black 3Dconnexion 3D mouse with blue-ringed knob on white background"
