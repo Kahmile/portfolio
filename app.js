@@ -24,6 +24,10 @@
   const ARROW_SVG = '<svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" focusable="false">' +
     '<path d="M4 12h14M12 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="3.5" ' +
     'stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const icon = (d) => `<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false">` +
+    `<path d="${d}" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  const ENTER_FULLSCREEN_SVG = icon("M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5");
+  const EXIT_FULLSCREEN_SVG = icon("M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5");
 
   // ---------- Helpers ----------
   function el(tag, attrs, children) {
@@ -343,7 +347,9 @@
 
     const frame = el("div", { class: "slide-frame" });
     const img = el("img", { src: "", alt: "" });
-    const video = el("video", { controls: "", playsinline: "", preload: "metadata" });
+    // The browser's own video full-screen button is hidden so everyone uses the slideshow's full screen,
+    // which keeps the previous/next buttons and arrow keys working.
+    const video = el("video", { controls: "", playsinline: "", preload: "metadata", controlslist: "nofullscreen" });
 
     const caption = el("p", { class: "slide-caption", id: `caption-${project.slug}` });
     const counter = el("p", { class: "slide-counter" });
@@ -360,6 +366,9 @@
     prev.innerHTML = ARROW_SVG;
     next.innerHTML = ARROW_SVG;
     prev.firstChild.classList.add("flip");
+    const fullscreenBtn = el("button", { class: "fullscreen-btn", type: "button", "aria-label": "View full screen", title: "Full screen" });
+    fullscreenBtn.innerHTML = ENTER_FULLSCREEN_SVG;
+    const hint = el("p", { class: "slide-hint" });
 
     // autoplay: start videos when the visitor navigates to them (not on first page load).
     function show(newIndex, autoplay = true) {
@@ -372,13 +381,13 @@
         video.poster = slide.poster ? encodeURI(slide.poster) : "";
         video.setAttribute("aria-label", slide.alt);
         video.setAttribute("aria-describedby", caption.id);
-        frame.append(video);
+        frame.append(video, fullscreenBtn);
       } else {
         video.removeAttribute("src");
         video.load();
         img.src = encodeURI(slide.src);
         img.alt = slide.alt;
-        frame.append(img);
+        frame.append(img, fullscreenBtn);
       }
       caption.textContent = slide.caption;
       description.textContent = (slide.type === "video" ? "Video: " : "") + slide.alt;
@@ -402,15 +411,46 @@
     const wrapper = el("section", { class: "slideshow", "aria-roledescription": "carousel", "aria-label": `${project.title} gallery` }, [
       frame,
       el("div", { class: "slide-controls" }, [prev, live, next]),
-      el("p", { class: "slide-hint", text: "Use the arrow buttons or your keyboard's ← → keys to browse." }),
+      hint,
     ]);
+
+    // ---- Full screen: the whole slideshow (image/video, arrows, caption, counter) fills the screen. ----
+    // Uses the browser Fullscreen API; where that isn't available (e.g. iPhone) a full-window overlay
+    // with the same controls is used instead.
+    const isFullscreen = () => wrapper.classList.contains("is-fullscreen");
+    function setFullscreen(on) {
+      if (on === isFullscreen()) return;
+      wrapper.classList.toggle("is-fullscreen", on);
+      document.body.classList.toggle("slideshow-fullscreen", on);
+      fullscreenBtn.innerHTML = on ? EXIT_FULLSCREEN_SVG : ENTER_FULLSCREEN_SVG;
+      fullscreenBtn.setAttribute("aria-label", on ? "Exit full screen" : "View full screen");
+      fullscreenBtn.title = on ? "Exit full screen (Esc)" : "Full screen";
+      hint.textContent = on
+        ? "Use the arrow buttons or ← → keys to browse. Press Esc to exit full screen."
+        : "Use the arrow buttons or your keyboard's ← → keys to browse.";
+      if (on && wrapper.requestFullscreen) wrapper.requestFullscreen().catch(() => {});
+      if (!on && document.fullscreenElement === wrapper) document.exitFullscreen().catch(() => {});
+      fullscreenBtn.focus({ preventScroll: true });
+    }
+    fullscreenBtn.addEventListener("click", () => setFullscreen(!isFullscreen()));
+    img.addEventListener("click", () => setFullscreen(true));
+    // Leaving native full screen with Esc or the browser's own controls: drop the overlay styling too.
+    wrapper.addEventListener("fullscreenchange", () => {
+      if (!document.fullscreenElement && isFullscreen()) setFullscreen(false);
+    });
+    hint.textContent = "Use the arrow buttons or your keyboard's ← → keys to browse.";
 
     if (PRERENDER) wrapper.append(staticGallery(slides));
     show(0, false);
     slideshow = {
       prev: () => show(index - 1),
       next: () => show(index + 1),
-      stop: () => video.pause(),
+      isFullscreen,
+      exitFullscreen: () => setFullscreen(false),
+      stop: () => {
+        video.pause();
+        setFullscreen(false);
+      },
     };
     return wrapper;
   }
@@ -431,9 +471,15 @@
 
   document.addEventListener("keydown", (event) => {
     if (!slideshow || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
-    // Let focused media, form fields, and the open menu keep their own arrow-key behavior.
+    const fullscreen = slideshow.isFullscreen();
+    if (event.key === "Escape" && fullscreen) {
+      slideshow.exitFullscreen();
+      return;
+    }
+    // Outside full screen, let focused media, form fields, and the open menu keep their own arrow-key
+    // behavior; in full screen the arrows always change slides.
     const target = event.target;
-    if (target.closest && (target.closest("video, input, textarea, select, [contenteditable]") || target.closest("#projects-menu"))) return;
+    if (!fullscreen && target.closest && (target.closest("video, input, textarea, select, [contenteditable]") || target.closest("#projects-menu"))) return;
     if (event.key === "ArrowLeft") {
       event.preventDefault();
       slideshow.prev();

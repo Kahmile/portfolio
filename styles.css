@@ -414,3 +414,55 @@ h1:focus { outline: none; }
 /* Text-only fallback gallery (shown only when JavaScript is off; crawlers read it too) */
 .static-gallery { margin: 1rem 0 0; padding-left: 1.2rem; }
 .static-gallery img { max-width: 100%; height: auto; border-radius: var(--radius); }
+
+/* ---------- Slideshow full screen ---------- */
+.fullscreen-btn {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 2;
+  width: 2.75rem;
+  height: 2.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #fff;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  cursor: pointer;
+}
+.fullscreen-btn:hover { background: #000; }
+.slide-frame img { cursor: zoom-in; }
+
+body.slideshow-fullscreen { overflow: hidden; }
+
+.slideshow.is-fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 1rem 1.5rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  background: #000;
+}
+.slideshow.is-fullscreen .slide-frame {
+  flex: 1;
+  min-height: 0;
+  height: auto;
+  border-radius: 0;
+  background: #000;
+}
+.slideshow.is-fullscreen .slide-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  cursor: default;
+}
+.slideshow.is-fullscreen .slide-caption,
+.slideshow.is-fullscreen .slide-counter { color: #fff; }
+.slideshow.is-fullscreen .slide-hint { color: #c9ced6; }
+.slideshow.is-fullscreen .slide-btn { border-color: #fff; }
