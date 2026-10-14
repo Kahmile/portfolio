@@ -69,11 +69,12 @@ Page: https://kahmile.github.io/portfolio/projects/3d-cad-accessibility-project/
 
 Gallery:
 1. Image — Tactile Pin-Array Display: Black Graphiti tactile pin-array display angled on white background, raised pins forming a graphic
-2. Image — 3D Model Slicer: Parameter Entry: Starting web app screen where user can input their desired parameters including the file name of the 3D model they want to slice, the direction vector that defines the cross section cutting plane, the number of slices, and the index of the slice they want to start on.
-3. Image — Generated Slice Preview: View of the web app after the generate slice button has been pressed. A preview of a cross section resembling a three lobed fidget spinner can be seen as well as a full screen button.
-4. Image — Cycloidal Gear Slice 3 of 10 (Full Screen): Full screen view of slice 3. A white fidget spinner like region on a black background.
-5. Image — Cycloidal Gear Slice 10 of 10 (Full Screen): Full screen view of slice 10, a counterclockwise rotation of a few degrees of slice 3.
-6. Image — 3D Mouse Controller: Top-down view of black 3Dconnexion 3D mouse with blue-ringed knob on white background
+2. Image — 3D CAD Viewer: Cycloidal Gear Rendering: Isometric View of a Cycloidal Gear. Resembles a twizzler stick as three coarse threads swirl around the outside of a central shaft. Small through-hole in central shaft. A cross section along the length-wise axis would resemble a three-lobed fidget spinner.
+3. Image — 3D Model Slicer: Parameter Entry: Starting web app screen where user can input their desired parameters including the file name of the 3D model they want to slice, the direction vector that defines the cross section cutting plane, the number of slices, and the index of the slice they want to start on.
+4. Image — Generated Slice Preview: View of the web app after the generate slice button has been pressed. A preview of a cross section resembling a three lobed fidget spinner can be seen as well as a full screen button.
+5. Image — Cycloidal Gear Slice 3 of 10 (Full Screen): Full screen view of slice 3. A white fidget spinner like region on a black background.
+6. Image — Cycloidal Gear Slice 10 of 10 (Full Screen): Full screen view of slice 10, a counterclockwise rotation of a few degrees of slice 3.
+7. Image — 3D Mouse Controller: Top-down view of black 3Dconnexion 3D mouse with blue-ringed knob on white background
 
 ### Audio-Haptic RC Car
 Dates: June 2024 - TBD

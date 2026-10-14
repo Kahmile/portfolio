@@ -239,6 +239,12 @@ window.PROJECTS = [
       },
       {
         "type": "image",
+        "src": "assets/projects/3d-cad-accessibility-project/3D CAD Viewer- Cycloidal Gear Rendering.png",
+        "caption": "3D CAD Viewer: Cycloidal Gear Rendering",
+        "alt": "Isometric View of a Cycloidal Gear. Resembles a twizzler stick as three coarse threads swirl around the outside of a central shaft. Small through-hole in central shaft. A cross section along the length-wise axis would resemble a three-lobed fidget spinner."
+      },
+      {
+        "type": "image",
         "src": "assets/projects/3d-cad-accessibility-project/cropped_parameter_entry.png",
         "caption": "3D Model Slicer: Parameter Entry",
         "alt": "Starting web app screen where user can input their desired parameters including the file name of the 3D model they want to slice, the direction vector that defines the cross section cutting plane, the number of slices, and the index of the slice they want to start on."
