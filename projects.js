@@ -7,7 +7,7 @@ window.SITE = {
   "affiliation": "Massachusetts Institute of Technology",
   "profile": {
     "src": "assets/profile/profile.jpg",
-    "alt": "Kahmile A. Whitby smiling in tinted aviator glasses and a pink patterned polo shirt."
+    "alt": "Kahmile Whitby smiling in tinted aviator glasses and black suit with blue shirt and tie."
   },
   "bio": [
     "With a strong hands-on background, I am passionate about the product development process. My interests currently lie at the intersection of engineering and my lived experience with low vision. I am interested in helping consumer product companies make interfaces that are also usable by people with disabilities."
